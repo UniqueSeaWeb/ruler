@@ -116,12 +116,18 @@ main {
 
 .horizontal>.square {
     width: 10px;
-}
-
-.horizontal>.square {
     border-right: 1px solid #2E2E2E;
 }
 
 .horizontal>.square:not(:nth-child(5n)) {
     height: 50%;
+}
+
+.vertical>.square {
+    height: 10px;
+    border-bottom: 1px solid #2E2E2E;
+}
+
+.vertical>.square:not(:nth-child(5n)) {
+    width: 50%;
 }
