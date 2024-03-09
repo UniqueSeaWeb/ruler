@@ -1,0 +1,127 @@
+/* レイアウト */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+}
+
+main {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: #CCEBE6;
+}
+
+.cardList>li:not(:first-child) {
+    padding: 24px 0 0 0;
+}
+
+.card {
+    width: 200px;
+    padding: 24px;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.card_cont {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    padding-top: 8px;
+}
+
+.card_cont>p:last-child {
+    margin-left: 4px;
+}
+
+.typo_ttl {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: #2E2E2E;
+    text-align: center;
+}
+
+.typo_num {
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 44px;
+    color: #2E2E2E;
+}
+
+.typo_unit {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 26px;
+    color: #2E2E2E;
+}
+
+@media (min-width: 768px) {
+    .cardList {
+        display: flex;
+        justify-content: center;
+    }
+
+    .cardList>li:not(:first-child) {
+        padding: 0 0 0 40px;
+    }
+
+    .card {
+        width: 300px;
+        padding: 32px;
+    }
+
+    .card_cont {
+        padding-top: 16px;
+    }
+
+    .card_cont>p:last-child {
+        margin-left: 8px;
+    }
+
+    .typo_ttl {
+        font-size: 24px;
+        line-height: 32px;
+    }
+
+    .typo_num {
+        font-size: 44px;
+        line-height: 56px;
+    }
+    
+    .typo_unit {
+        font-size: 20px;
+        line-height: 28px;
+    }
+}
+
+/* 定規 */
+.horizontal, .vertical {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.horizontal {
+    display: flex;
+    height: 20px;
+}
+
+.vertical {
+    width: 20px;
+}
+
+.horizontal>.square {
+    width: 10px;
+}
+
+.horizontal>.square {
+    border-right: 1px solid #2E2E2E;
+}
+
+.horizontal>.square:not(:nth-child(5n)) {
+    height: 50%;
+}
