@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>Ruler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <style>
+        /* リセット */
+        body,
+        ul,
+        li,
+        div,
+        p {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        /* レイクアウト */
+        html {
+            height: 100%;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        body {
+            height: 100%;
+        }
+
+        main {
+            position: relative;
+            height: 100%;
+            background-color: #CCEBE6;
+        }
+
+        /* 画面サイズ表示エリア */
+        .valueArea {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .valueArea>li {
+            padding: 16px 36px;
+            border-radius: 16px;
+            background-color: #FFFFFF;
+            box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .valueArea>li:not(:first-child) {
+            margin-top: 48px;
+        }
+
+        .valueLabel {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 24px;
+            color: #2E2E2E;
+        }
+
+        .valuePixel {
+            display: flex;
+            align-items: baseline;
+            padding-top: 8px;
+        }
+
+        .valueNum {
+            flex-grow: 1;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 40px;
+            color: #2E2E2E;
+            text-align: right;
+        }
+
+        .valueUnit {
+            margin-left: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 24px;
+            color: #2E2E2E;
+        }
+
+        @media (min-width: 768px) {
+            .valueArea {
+                display: flex;
+            }
+
+            .valueArea>li {
+                flex-grow: 1;
+                padding: 24px 48px;
+                border-radius: 24px;
+            }
+
+            .valueArea>li:first-child {
+                margin-right: 24px;
+            }
+
+            .valueArea>li:not(:first-child) {
+                margin-top: 0;
+                margin-left: 24px;
+            }
+
+            .valueLabel {
+                font-size: 24px;
+                line-height: 32px;
+            }
+
+            .valuePixel {
+                padding-top: 16px;
+            }
+
+            .valueNum {
+                font-size: 44px;
+                line-height: 52px;
+            }
+
+            .valueUnit {
+                margin-left: 8px;
+                font-size: 24px;
+                line-height: 32px;
+            }
+        }
+
+        /* 定規エリア */
+        .horizontal {
+            display: flex;
+            align-items: flex-start;
+            height: 20px;
+        }
+
+        .horizontal>.scale50,
+        .horizontal>.square20,
+        .horizontal .scale10 {
+            flex-shrink: 0;
+        }
+
+        .horizontal>.scale50 {
+            width: 10px;
+            height: 20px;
+            border-right: 1px solid #2E2E2E;
+        }
+
+        .square20 {
+            display: flex;
+            flex-wrap: wrap;
+            width: 20px;
+        }
+
+        .horizontal>.scale10 {
+            width: 10px;
+            height: 10px;
+            border-right: 1px solid #2E2E2E;
+        }
+
+        .square20>.scale10 {
+            width: 10px;
+            height: 10px;
+        }
+
+        .square20>.scale10:nth-of-type(1),
+        .square20>.scale10:nth-of-type(2) {
+            border-right: 1px solid #2E2E2E;
+        }
+
+        .square20>.scale10:nth-of-type(1),
+        .square20>.scale10:nth-of-type(3) {
+            border-bottom: 1px solid #2E2E2E;
+        }
+
+        .vertical {
+            width: 20px;
+        }
+
+        .vertical>.scale10,
+        .vertical>.scale50 {
+            height: 10px;
+            border-bottom: 1px solid #2E2E2E;
+        }
+
+        .vertical>.scale10 {
+            width: 10px;
+        }
+
+        .scaleValueWrapper {
+            position: relative;
+        }
+
+        .scaleValue {
+            position: absolute;
+            display: flex;
+            font-size: 10px;
+            font-weight: 400;
+            line-height: 14px;
+            color: #2E2E2E;
+        }
+
+        .horizontal .scaleValue {
+            right: 0;
+            bottom: -14px;
+        }
+
+        .vertical .scaleValue {
+            bottom: 0;
+            left: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!-- 画面サイズ表示エリア -->
+        <ul class="valueArea">
+            <li>
+                <p class="valueLabel">横幅</p>
+                <div class="valuePixel">
+                    <p id="widthValue" class="valueNum"></p>
+                    <p class="valueUnit">px</p>
+                </div>
+            </li>
+            <li>
+                <p class="valueLabel">縦幅</p>
+                <div class="valuePixel">
+                    <p id="heightValue" class="valueNum"></p>
+                    <p class="valueUnit">px</p>
+                </div>
+            </li>
+        </ul>
+
+        <!-- 定規エリア -->
+        <div class="horizontal"></div>
+        <div class="vertical"></div>
+    </main>
+
+    <script>
+        /* 画面サイズの数値を表示する処理 */
+        function showSize() {
+            // 要素を取得
+            const widthValueElem = document.getElementById('widthValue');
+            const heightValueElem = document.getElementById('heightValue');
+            // 値を取得
+            let widthValue = document.documentElement.clientWidth;
+            let heightValue = document.documentElement.clientHeight;
+            // 画面に値を表示
+            widthValueElem.innerText = widthValue;
+            heightValueElem.innerText = heightValue;
+        }
+
+        window.addEventListener('load', showSize);
+        window.addEventListener('resize', showSize);
+
+        /* 画面読み込み時に定規を表示する処理 */
+        function setRuler() {
+            // 値を取得
+            let widthValue = document.documentElement.clientWidth;
+            let heightValue = document.documentElement.clientHeight;
+            // 横縦定規の要素を取得
+            const horizontalElem = document.getElementsByClassName('horizontal')[0];
+            const verticalElem = document.getElementsByClassName('vertical')[0];
+            // 横軸定規を表示
+            for (let w = 0; w < Math.floor(widthValue / 10); w++) {
+                if (w % 5 == 4) {
+                    let scale = document.createElement('div');
+                    scale.classList.add('scale50', 'scaleValueWrapper');
+                    let scaleValue = document.createElement('p');
+                    scaleValue.classList.add('scaleValue');
+                    scaleValue.innerText = (w + 1) * 10;
+                    scale.appendChild(scaleValue);
+                    horizontalElem.appendChild(scale);
+                } else {
+                    if (w == 0) {
+                        continue;
+                    } else if (w == 1) {
+                        let square = document.createElement('div');
+                        square.classList.add('square20');
+                        for (let i = 0; i < 3; i++) {
+                            let scale10 = document.createElement('div');
+                            scale10.classList.add('scale10');
+                            square.appendChild(scale10);
+                        }
+                        horizontalElem.appendChild(square);
+                    } else {
+                        let scale = document.createElement('div');
+                        scale.classList.add('scale10');
+                        horizontalElem.appendChild(scale);
+                    }
+                }
+            }
+            // 縦軸定規を表示
+            for (let h = 0; h < Math.floor(heightValue / 10); h++) {
+                if (h == 0 || h == 1) {
+                    continue;
+                } else {
+                    let scale = document.createElement('div');
+                    if (h % 5 == 4) {
+                        scale.classList.add('scale50', 'scaleValueWrapper');
+                        let scaleValue = document.createElement('p');
+                        scaleValue.classList.add('scaleValue');
+                        scaleValue.innerText = (h + 1) * 10;
+                        scale.appendChild(scaleValue);
+                    } else {
+                        scale.classList.add('scale10');
+                    }
+                    verticalElem.appendChild(scale);
+                }
+            }
+        }
+
+        window.addEventListener('load', setRuler);
+
+        /* 画面リサイズ時に定規を再表示する処理 */
+        function resetRuler() {
+            // 横縦定規の要素を取得
+            const horizontalElem = document.getElementsByClassName('horizontal')[0];
+            const verticalElem = document.getElementsByClassName('vertical')[0];
+            // 横縦定規内の全ての要素を削除
+            horizontalElem.innerHTML = '';
+            verticalElem.innerHTML = '';
+            // 定規を再設定
+            setRuler();
+        }
+
+        window.addEventListener('resize', resetRuler);
+    </script>
+</body>
+
+</html>
